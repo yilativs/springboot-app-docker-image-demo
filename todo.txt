@@ -1,0 +1,5 @@
+make sure image layers are not re-created with each build
+add ssl certificate generation in builder and put it as a last layer
+pass environment parameters to java path
+
+identify optimal parameters e.g. consider zgc usage, xmx and xms being equal see https://stackoverflow.com/questions/43651167/is-there-any-advantage-in-setting-xms-and-xmx-to-the-same-value
