@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.5</version>
+        <version>2.5.0</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.sample.foo</groupId>
@@ -17,7 +17,7 @@
     <properties>
         <java.version>11</java.version>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -49,13 +49,48 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.4.5</version>
                 <configuration>
-                   <!--  <layers>true</layers>
-                    <layout>LAYERED_JAR</layout> -->
+                    <!-- <layers>true</layers> <layout>LAYERED_JAR</layout> -->
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.35.0</version>
+                <configuration>
+                    <verbose>true</verbose>
+                    <images>
+                        <image>
+                            <name>${project.groupId}-${project.artifactId}</name>
+                            <build>
+                                <tags>
+                                    <tag>${project.version}</tag>
+                                </tags>
+                                <dockerFileDir>${project.basedir}</dockerFileDir>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>docker-build</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                     <execution>
+                        <id>docker-push</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
+
 
 </project>
