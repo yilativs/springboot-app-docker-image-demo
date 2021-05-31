@@ -1,12 +1,3 @@
-#install dive https://github.com/wagoodman/dive
-#about layers https://spring.io/blog/2020/08/14/creating-efficient-docker-images-with-spring-boot-2-3
-#instead of layers uses target staructure https://spring.io/guides/gs/spring-boot-docker/
-#https://www.youtube.com/watch?v=WL7U-yGfUXA&t=240sf
-
-#https://www.baeldung.com/docker-layers-spring-boot
-#best article on signals
-#https://hynek.me/articles/docker-signals/
-
 FROM adoptopenjdk:11-jre-hotspot as builder
 WORKDIR /opt/service
 #needed only if your jar file name is not constunt (instead of it it's better to use <finalName> in pom
@@ -19,14 +10,9 @@ RUN keytool  -noprompt -genkeypair -alias service -keyalg RSA -keysize 2048 -sto
 RUN keytool  -noprompt -genkeypair -alias service -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/int-cert.p12 -validity 3650 -storepass notAsecret -dname CN="*.platform.int.intranet"
 RUN keytool  -noprompt -genkeypair -alias service -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/prod-cert.p12 -validity 3650 -storepass notAsecret -dname CN="*.platform.prod.intranet"
 
-#FROM adoptopenjdk:11-jre-hotspot
-#RUN adduser --system  --group --home /opt/service service
-
 FROM amazoncorretto:11-alpine-jdk
 #alpine based images should use this ugly command
 RUN addgroup -S service && adduser -S service -G service -h /opt/service
-#see https://stackoverflow.com/questions/27701930/how-to-add-users-to-docker-container
-#RUN addgroup -S service  
 
 
 WORKDIR /opt/service
@@ -40,7 +26,7 @@ RUN mkdir -p /opt/service/ssl
 COPY --from=builder /opt/service/ssl/ ./ssl
 
 COPY entry-point.sh /opt/service/entry-point.sh
-RUN chown -R service:service /opt/service 
+RUN chown -R service:service /opt/service
 RUN chmod u+x /opt/service/entry-point.sh
 
 RUN apk add --no-cache tini
@@ -58,4 +44,4 @@ ENV JAVA_OPTS="-Xms1g -Xmx1g"
 #https://github.com/krallin/tini
 # -v -vv and -vvv stands for verbosity level
 ENTRYPOINT ["/sbin/tini", "-v", "--", "/opt/service/entry-point.sh"]
-CMD "--spring.profiles.active=dev"
+CMD [--spring.profiles.active=dev]

@@ -9,60 +9,65 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 /**
- *  A service with name starting with A to validate that AALoggingSystemGreacefulShutdownService is executed last.
+ * A service with name starting with A to validate that
+ * AALoggingSystemGreacefulShutdownService is executed last.
  */
 @Service
-public class AFooService implements BeanNameAware, ApplicationContextAware,    InitializingBean, DisposableBean {
+public class AFooService implements BeanNameAware, ApplicationContextAware, InitializingBean, DisposableBean {
 
-  private static final Logger logger = LoggerFactory.getLogger(AFooService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AFooService.class);
+    @Value("${foo.parameter}")
+    String fooParameter;
 
-  @Override
-  public void setBeanName(String name) {
-    logToSystemAndSysOut("--- setBeanName executed ---");
-  }
+    @Override
+    public void setBeanName(String name) {
+        logToSystemAndSysOut("--- setBeanName executed ---");
+        logToSystemAndSysOut("foo.parameter=" + fooParameter);
+    }
 
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext)
-      throws BeansException {
-    logToSystemAndSysOut("--- setApplicationContext executed ---");
-  }
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        logToSystemAndSysOut("--- setApplicationContext executed ---");
+    }
 
-  @PostConstruct
-  public void postConstruct() {
-    logToSystemAndSysOut("--- @PostConstruct executed ---");
-  }
+    @PostConstruct
+    public void postConstruct() {
+        logToSystemAndSysOut("--- @PostConstruct executed ---");
+    }
 
-  @Override
-  public void afterPropertiesSet() {
-    logToSystemAndSysOut("--- afterPropertiesSet executed ---");
-  }
+    @Override
+    public void afterPropertiesSet() {
+        logToSystemAndSysOut("--- afterPropertiesSet executed ---");
+    }
 
-  public void initMethod() {
-    logToSystemAndSysOut("--- init-method executed ---");
-  }
+    public void initMethod() {
+        logToSystemAndSysOut("--- init-method executed ---");
+    }
 
-  @PreDestroy
-  public void preDestroy() {
-    logToSystemAndSysOut("--- @PreDestroy executed ---");
-  }
+    @PreDestroy
+    public void preDestroy() {
+        logToSystemAndSysOut("--- @PreDestroy executed ---");
+    }
 
-  @Override
-  public void destroy() throws Exception {
-    logToSystemAndSysOut("--- destroy executed ---");
-  }
+    @Override
+    public void destroy() throws Exception {
+        logToSystemAndSysOut("--- destroy executed ---");
+    }
 
-  public void destroyMethod() {
-    logToSystemAndSysOut("--- destroy-method executed ---");
-  }
-  
-  private static void logToSystemAndSysOut(String message) {
-      logger.info(message);
-      System.out.println(message);
-  }
+    public void destroyMethod() {
+        logToSystemAndSysOut("--- destroy-method executed ---");
+    }
+
+    private static void logToSystemAndSysOut(String message) {
+        logger.info(message);
+        System.out.println(message);
+    }
 
 }

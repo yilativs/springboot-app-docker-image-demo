@@ -10,10 +10,9 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.sample.foo</groupId>
-    <artifactId>foo-efficient-docker</artifactId>
+    <artifactId>spring-boot-application-docker-image-demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>foo-efficient-docker</name>
-    <description>Demonstrates Efficient docker image</description>
+    <name>Spring Boot Application Docker Image Demo</name>
     <properties>
         <java.version>11</java.version>
     </properties>
@@ -53,41 +52,95 @@
                     <!-- <layers>true</layers> <layout>LAYERED_JAR</layout> -->
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.35.0</version>
-                <configuration>
-                    <verbose>true</verbose>
-                    <images>
-                        <image>
-                            <name>${project.groupId}-${project.artifactId}</name>
-                            <build>
-                                <tags>
-                                    <tag>${project.version}</tag>
-                                </tags>
-                                <dockerFileDir>${project.basedir}</dockerFileDir>
-                            </build>
-                        </image>
-                    </images>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>docker-build</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                     <execution>
-                        <id>docker-push</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>push</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>build-docker-from-amazoncorretto11</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>0.35.0</version>
+                        <configuration>
+                            <verbose>true</verbose>
+                            <images>
+                                <image>
+                                    <name>${project.artifactId}-amazoncorretto11</name>
+                                    <build>
+                                        <tags>
+                                            <tag>${project.version}</tag>
+                                        </tags>
+                                        <contextDir>${project.basedir}</contextDir>
+                                        <!-- <dockerFile>FromAdoptOpenJdk11.Dockerfile</dockerFile> -->
+                                        <dockerFile>FromAmazoncorretto11-alpine-jdk.Dockerfile</dockerFile>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>docker-build</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>docker-push</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>push</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>build-docker-from-adoptionjdk11</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>0.35.0</version>
+                        <configuration>
+                            <verbose>true</verbose>
+                            <images>
+                                <image>
+                                    <name>${project.artifactId}-adoptopenjdk11</name>
+                                    <build>
+                                        <tags>
+                                            <tag>${project.version}</tag>
+                                        </tags>
+                                        <contextDir>${project.basedir}</contextDir>
+                                        <dockerFile>FromAdoptOpenJdk11.Dockerfile</dockerFile>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>docker-build</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>docker-push</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>push</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
