@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 //doesn't affect extShutdownHook order
 @Order(Ordered.LOWEST_PRECEDENCE)
 //AA affects shutdown order making service to be destroyed last
-public class AALoggingSystemGreacefulShutdownService implements DisposableBean {
-    private static final Logger logger = LoggerFactory.getLogger(AALoggingSystemGreacefulShutdownService.class);
+public class AALoggingSystemGracefulShutdownService implements DisposableBean {
+    private static final Logger logger = LoggerFactory.getLogger(AALoggingSystemGracefulShutdownService.class);
 
     @Autowired
     LoggingSystem loggingSystem;
-    
+
     @Override
     public void destroy() throws Exception {
         logger.info("cleaning logging system");
