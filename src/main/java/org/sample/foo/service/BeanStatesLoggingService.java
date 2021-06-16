@@ -5,7 +5,6 @@ import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -15,16 +14,17 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 /**
- * A service with name starting with A to validate that
- * AALoggingSystemGreacefulShutdownService is executed last.
+ * A service for logging Spring bean states
  */
 @Service
-public class AFooService implements BeanNameAware, ApplicationContextAware, InitializingBean, DisposableBean {
+public class BeanStatesLoggingService implements BeanNameAware, ApplicationContextAware, InitializingBean, DisposableBean {
+    final Logger logger = LoggerFactory.getLogger(BeanStatesLoggingService.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(AFooService.class);
+    //a parameter that you can pass to docker image with --foo.parameter=something
     @Value("${foo.parameter}")
     String fooParameter;
-
+    
+    
     @Override
     public void setBeanName(String name) {
         logToSystemAndSysOut("--- setBeanName executed ---");
@@ -32,8 +32,7 @@ public class AFooService implements BeanNameAware, ApplicationContextAware, Init
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) {
         logToSystemAndSysOut("--- setApplicationContext executed ---");
     }
 
@@ -47,10 +46,6 @@ public class AFooService implements BeanNameAware, ApplicationContextAware, Init
         logToSystemAndSysOut("--- afterPropertiesSet executed ---");
     }
 
-    public void initMethod() {
-        logToSystemAndSysOut("--- init-method executed ---");
-    }
-
     @PreDestroy
     public void preDestroy() {
         logToSystemAndSysOut("--- @PreDestroy executed ---");
@@ -60,13 +55,19 @@ public class AFooService implements BeanNameAware, ApplicationContextAware, Init
     public void destroy() throws Exception {
         logToSystemAndSysOut("--- destroy executed ---");
     }
-
+    
+    //in case you want to use @Bean(initMethod="initMethod")
+    public void initMethod() {
+        logToSystemAndSysOut("--- init-method executed ---");
+    }
+    //in case you want to use @Bean(destroyMethod="destroyMethod")
     public void destroyMethod() {
         logToSystemAndSysOut("--- destroy-method executed ---");
     }
 
-    private static void logToSystemAndSysOut(String message) {
+    private void logToSystemAndSysOut(String message) {
         logger.info(message);
+        //to log when log system is unavailable (there used to be a bug with logging system shutdown to early in spring)
         System.out.println(message);
     }
 
