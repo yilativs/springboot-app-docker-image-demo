@@ -11,7 +11,7 @@
 #-XX:NewRatio=2 - ration between young and tenured generation (for apps that mostly read data and store nothubg it can be 1)
 #-XX:+UseStringDeduplication optimizes the heap memory by reducing duplicate String values to a single global char[] array
 #-XX:+UseStringCache  enables caching of commonly allocated strings available in the String pool
-
+#-XX:+PrintFlagsFinal - always print all flags of the jvm
 
 #printing what will be launched
 echo "exec java ${JAVA_OPTS} org.springframework.boot.loader.JarLauncher $@"
