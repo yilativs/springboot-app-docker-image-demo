@@ -1,11 +1,15 @@
 # Spring Boot Application Docker Image Demo
 
 ### Features
-* Layered jar allows to minimize docker image size on rebuilds and speed up docker push and pull phases
-* Multiple profiles to build docker image on top of popular java images
-* Correct SIGTERM handling
+
+This project demonstrates following features of a Spring Boot Java application packaged as a docker image:
+
+* Layered jar - allows to minimize docker image size on rebuilds and speed up docker push and pull phases
+* Build properties - allows to use build properties such as pom.xml properties and build timestamp 
+* Multiple profiles to build docker image on top of popular java images - AdoptOpenJdk and Amazoncorretto are supported
+* SIGTERM handling
 * Graceful shutdown
-* Proper logging system shutdown
+* Logging system shutdown - shuts down your log system after all other beans destoyed 
 * Environment variables are passed via JAVA_OPTS
 * Docker run parameters handling
 * Runs as not a privileged user
