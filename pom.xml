@@ -48,8 +48,22 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <goals>
+                    <goal>build-info</goal>
+                </goals>
                 <configuration>
-                    <!-- <layers>true</layers> <layout>LAYERED_JAR</layout> -->
+                    <additionalProperties>
+                        <java.version>${java.version}</java.version>
+                        <foo.build.value>foo build value</foo.build.value>
+                    </additionalProperties>
                 </configuration>
             </plugin>
         </plugins>

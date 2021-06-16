@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
@@ -20,55 +22,71 @@ import org.springframework.stereotype.Service;
 public class BeanStatesLoggingService implements BeanNameAware, ApplicationContextAware, InitializingBean, DisposableBean {
     final Logger logger = LoggerFactory.getLogger(BeanStatesLoggingService.class);
 
-    //a parameter that you can pass to docker image with --foo.parameter=something
-    @Value("${foo.parameter}")
-    String fooParameter;
-    
-    
+    @Autowired
+    public void setBuildProperties(BuildProperties buildProperties) {
+        log("standard build properties are:");
+
+        log("groupId=" + buildProperties.getGroup());
+        log("artifactId=" + buildProperties.getArtifact());
+        log("artifact.name=" + buildProperties.getName());
+        log("artifact.version=" + buildProperties.getVersion());
+        log("build timestamp=" + buildProperties.getTime().toString());
+
+        log("additional build properties are:");
+        log("java.version=" + buildProperties.get("java.version"));
+        log("foo.build.value=" + buildProperties.get("foo.build.value"));
+
+    }
+
+    // a parameter that you can pass to docker image with --foo.parameter=something
+    @Autowired
+    public void setFooParameter(@Value("${foo.parameter}") String fooParameter) {
+        log("foo.parameter=" + fooParameter);
+    }
+
     @Override
     public void setBeanName(String name) {
-        logToSystemAndSysOut("--- setBeanName executed ---");
-        logToSystemAndSysOut("foo.parameter=" + fooParameter);
+        log("--- setBeanName executed ---");
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
-        logToSystemAndSysOut("--- setApplicationContext executed ---");
+        log("--- setApplicationContext executed ---");
     }
 
     @PostConstruct
     public void postConstruct() {
-        logToSystemAndSysOut("--- @PostConstruct executed ---");
+        log("--- @PostConstruct executed ---");
     }
 
     @Override
     public void afterPropertiesSet() {
-        logToSystemAndSysOut("--- afterPropertiesSet executed ---");
+        log("--- afterPropertiesSet executed ---");
     }
 
     @PreDestroy
     public void preDestroy() {
-        logToSystemAndSysOut("--- @PreDestroy executed ---");
+        log("--- @PreDestroy executed ---");
     }
 
     @Override
     public void destroy() throws Exception {
-        logToSystemAndSysOut("--- destroy executed ---");
+        System.out.println("!!!if you don't see log message after this message, your log system shuts down before other beans are destoyed!!!");
+        log("--- destroy executed ---");
     }
-    
-    //in case you want to use @Bean(initMethod="initMethod")
+
+    // in case you want to use @Bean(initMethod="initMethod")
     public void initMethod() {
-        logToSystemAndSysOut("--- init-method executed ---");
+        log("--- init-method executed ---");
     }
-    //in case you want to use @Bean(destroyMethod="destroyMethod")
+
+    // in case you want to use @Bean(destroyMethod="destroyMethod")
     public void destroyMethod() {
-        logToSystemAndSysOut("--- destroy-method executed ---");
+        log("--- destroy-method executed ---");
+
     }
 
-    private void logToSystemAndSysOut(String message) {
+    private void log(String message) {
         logger.info(message);
-        //to log when log system is unavailable (there used to be a bug with logging system shutdown to early in spring)
-        System.out.println(message);
     }
-
 }
