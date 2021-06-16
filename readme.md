@@ -43,5 +43,6 @@ docker run -it -v "$PWD/data":/opt/service/data -p 8443:8443 -p 8080:8080 -e JAV
 
 * [Article on layered jar in spring boot ](https://www.baeldung.com/docker-layers-spring-boot)
 * [Article on signals in docker](https://hynek.me/articles/docker-signals/)
+* [Graceful shutdowns with AWS ECS](https://aws.amazon.com/ru/blogs/containers/graceful-shutdowns-with-ecs/)
 * [A video on Spring Boot dive and layers](https://www.youtube.com/watch?v=WL7U-yGfUXA&t=240sf)
 * [dive - a tool to inspert docker imager layers ](https://github.com/wagoodman/dive)
