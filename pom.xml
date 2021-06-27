@@ -6,15 +6,16 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.1</version>
+        <version>2.5.2</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.sample.foo</groupId>
     <artifactId>spring-boot-application-docker-image-demo</artifactId>
-    <version>0.0.6-SNAPSHOT</version>
+    <version>0.0.7-SNAPSHOT</version>
     <name>Spring Boot Application Docker Image Demo</name>
     <properties>
         <java.version>11</java.version>
+        <docker-maven-plugin.version>0.36.0</docker-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -46,19 +47,19 @@
         <finalName>service</finalName>
         <plugins>
             <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>build-info</id>
                         <goals>
                             <goal>build-info</goal>
                         </goals>
                     </execution>
                 </executions>
-                <goals>
-                    <goal>build-info</goal>
-                </goals>
                 <configuration>
                     <additionalProperties>
                         <java.version>${java.version}</java.version>
@@ -76,20 +77,19 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.35.0</version>
+                        <version>${docker-maven-plugin.version}</version>
                         <configuration>
                             <verbose>true</verbose>
                             <images>
                                 <image>
-                                    <name>${project.artifactId}-amazoncorretto11</name>
+                                    <name>${project.artifactId}-amazoncorrettojdk11</name>
                                     <build>
                                         <tags>
                                             <tag>${project.version}</tag>
                                             <tag>latest</tag>
                                         </tags>
                                         <contextDir>${project.basedir}</contextDir>
-                                        <!-- <dockerFile>FromAdoptOpenJdk11.Dockerfile</dockerFile> -->
-                                        <dockerFile>FromAmazoncorretto11-alpine-jdk.Dockerfile</dockerFile>
+                                        <dockerFile>FromAmazonCorrettoJdk11.Dockerfile</dockerFile>
                                     </build>
                                 </image>
                             </images>
@@ -115,13 +115,13 @@
             </build>
         </profile>
         <profile>
-            <id>build-docker-from-adoptionjdk11</id>
+            <id>build-docker-from-adoptopenjdk11</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.35.0</version>
+                        <version>${docker-maven-plugin.version}</version>
                         <configuration>
                             <verbose>true</verbose>
                             <images>

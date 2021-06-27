@@ -6,9 +6,11 @@ COPY ${JAR_FILE} /opt/service/service.jar
 RUN java -Djarmode=layertools -jar service.jar extract
 
 RUN mkdir -p /opt/service/ssl
-RUN keytool  -noprompt -genkeypair -alias service -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/dev-cert.p12 -validity 3650 -storepass notAsecret -dname CN="*.platform.dev.intranet"
-RUN keytool  -noprompt -genkeypair -alias service -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/int-cert.p12 -validity 3650 -storepass notAsecret -dname CN="*.platform.int.intranet"
-RUN keytool  -noprompt -genkeypair -alias service -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/prod-cert.p12 -validity 3650 -storepass notAsecret -dname CN="*.platform.prod.intranet"
+
+RUN keytool  -noprompt -genkeypair -alias service-local -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/cert.p12 -validity 365 -storepass notAsecret -dname CN="localhost"
+RUN keytool  -noprompt -genkeypair -alias service-dev -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/cert.p12 -validity 365 -storepass notAsecret -dname CN="*.platform.dev.intranet"
+RUN keytool  -noprompt -genkeypair -alias service-int -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/cert.p12 -validity 365 -storepass notAsecret -dname CN="*.platform.int.intranet"
+RUN keytool  -noprompt -genkeypair -alias service-prod -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/cert.p12 -validity 365 -storepass notAsecret -dname CN="*.platform.prod.intranet"
 
 FROM adoptopenjdk:11-jre-hotspot
 RUN adduser --system  --group --home /opt/service service
@@ -32,6 +34,7 @@ USER service:service
 
 #we can mount it in case we want to provide application with some changing data, ssl certs, property files and so on
 VOLUME [/opt/service/data]
+VOLUME [/opt/service/logs]
 EXPOSE 8080/tcp
 EXPOSE 8443/tcp
 
@@ -41,4 +44,4 @@ ENV JAVA_OPTS="-Xms1g -Xmx1g"
 #https://github.com/krallin/tini
 # -v -vv and -vvv stands for verbosity level
 ENTRYPOINT ["/usr/bin/tini", "-v", "--", "/opt/service/entry-point.sh"]
-CMD [--spring.profiles.active=dev]
+CMD [--spring.profiles.active=local]
