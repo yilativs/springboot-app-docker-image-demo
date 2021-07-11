@@ -17,7 +17,7 @@ This project demonstrates following features of a Spring Boot Java application p
 * Runs as not a privileged user
 * Self signed SSL certificate generation - often useful for services running behind a reversed proxy.
 * Provides a VOLUME for data
-* Exposes ports 8080 and 8843
+* Exposes ports 8080 and 8443
 
 ### Usage
 
@@ -28,7 +28,7 @@ mvn clean install -P build-docker-from-amazoncorretto11
 or
 
 ```
-mvn clean install -P build-docker-from-adoptionjdk11
+mvn clean install -P build-docker-from-adoptopenjdk11
 ```
 
 #### Launch image instance using docker command:
