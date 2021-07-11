@@ -16,9 +16,11 @@ services:
     env_file:
       - docker-compose-env.txt
     volumes:
-       - service-data:/opt/service/data
+       - service-config:/opt/service/config
        - service-logs:/opt/service/logs
+       - service-ssl:/opt/service/ssl
 
 volumes:
-  service-data:
+  service-config:
   service-logs:
+  service-ssl:
