@@ -16,28 +16,37 @@ FROM amazoncorretto:11-alpine-jdk
 #alpine based images should use this ugly command
 RUN addgroup -S service && adduser -S service -G service -h /opt/service
 
+# if you want to copy tini binary from builder it will not work(alpine not working with precompiled binaries from other distros)
+#https://github.com/github/hub/issues/1818
+# you should change the builder image to alpine or install tini as apk
+RUN apk add tini --no-cache
 
 WORKDIR /opt/service
+RUN mkdir -p /opt/service/ssl
+
 COPY --from=builder /opt/service/dependencies/ ./
 COPY --from=builder /opt/service/snapshot-dependencies/ ./
 COPY --from=builder /opt/service/spring-boot-loader/ ./
 COPY --from=builder /opt/service/application/ ./
-
-
-RUN mkdir -p /opt/service/ssl
 COPY --from=builder /opt/service/ssl/ ./ssl
 
 COPY entry-point.sh /opt/service/entry-point.sh
 RUN chown -R service:service /opt/service
 RUN chmod u+x /opt/service/entry-point.sh
 
-RUN apk add --no-cache tini
 
 USER service:service
 
-#we can mount it in case we want to provide application with some changing data, ssl certs, property files and so on
-VOLUME [/opt/service/data]
-VOLUME [/opt/service/logs]
+#can be used to override image build in configs (e.g. in kubernetes)
+VOLUME ["/opt/service/config"]
+
+#can be used in order to store service logs
+VOLUME ["/opt/service/logs"]
+
+#can be used in order to provide certificates (if you have any)
+VOLUME ["/opt/service/ssl"]
+
+
 EXPOSE 8080/tcp
 EXPOSE 8443/tcp
 
