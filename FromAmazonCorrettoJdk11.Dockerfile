@@ -1,5 +1,7 @@
-FROM adoptopenjdk:11-jre-hotspot as builder
+# base image was changed to alpine to prevent issuses with prebuild tini binary is not running in target container when binary was build in other disto (not alpine)
+FROM adoptopenjdk/openjdk11:x86_64-alpine-jre-11.0.11_9 as builder
 WORKDIR /opt/service
+RUN apk add tini --no-cache
 #needed only if your jar file name is not constunt (instead of it it's better to use <finalName> in pom
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} /opt/service/service.jar
@@ -14,26 +16,21 @@ RUN keytool  -noprompt -genkeypair -alias service-prod -keyalg RSA -keysize 2048
 
 FROM amazoncorretto:11-alpine-jdk
 #alpine based images should use this ugly command
-RUN addgroup -S service && adduser -S service -G service -h /opt/service
-
-# if you want to copy tini binary from builder it will not work(alpine not working with precompiled binaries from other distros)
-#https://github.com/github/hub/issues/1818
-# you should change the builder image to alpine or install tini as apk
-RUN apk add tini --no-cache
-
 WORKDIR /opt/service
-RUN mkdir -p /opt/service/ssl
+COPY entry-point.sh /opt/service/entry-point.sh
+
+RUN addgroup -S service && \
+adduser -S service -G service -h /opt/service && \
+mkdir -p /opt/service/ssl && \
+chown -R service:service /opt/service \
+&& chmod u+x /opt/service/entry-point.sh
 
 COPY --from=builder /opt/service/dependencies/ ./
 COPY --from=builder /opt/service/snapshot-dependencies/ ./
 COPY --from=builder /opt/service/spring-boot-loader/ ./
 COPY --from=builder /opt/service/application/ ./
 COPY --from=builder /opt/service/ssl/ ./ssl
-
-COPY entry-point.sh /opt/service/entry-point.sh
-RUN chown -R service:service /opt/service
-RUN chmod u+x /opt/service/entry-point.sh
-
+COPY --from=builder /sbin/tini /sbin/tini
 
 USER service:service
 
@@ -45,7 +42,6 @@ VOLUME ["/opt/service/logs"]
 
 #can be used in order to provide certificates (if you have any)
 VOLUME ["/opt/service/ssl"]
-
 
 EXPOSE 8080/tcp
 EXPOSE 8443/tcp
