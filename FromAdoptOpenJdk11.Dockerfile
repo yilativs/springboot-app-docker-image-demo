@@ -21,10 +21,9 @@ COPY --from=builder /usr/bin/tini /usr/bin/tini
 #create user service in order not to run service not as root
 RUN adduser --system  --group --home /opt/service service
 
-COPY entry-point.sh /opt/service/entry-point.sh
-RUN chown -R service:service /opt/service
+COPY  --chown=service:service entry-point.sh /opt/service/entry-point.sh
+#chmod can be used in COPY with DOCKER_BUILDKIT=1
 RUN chmod u+x /opt/service/entry-point.sh
-
 #switch to user 
 USER service:service
 
