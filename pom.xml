@@ -6,12 +6,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.2</version>
+        <version>2.5.3</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.sample.foo</groupId>
     <artifactId>spring-boot-application-docker-image-demo</artifactId>
-    <version>0.0.8-SNAPSHOT</version>
+    <version>0.0.9-SNAPSHOT</version>
     <name>Spring Boot Application Docker Image Demo</name>
     <properties>
         <java.version>11</java.version>
