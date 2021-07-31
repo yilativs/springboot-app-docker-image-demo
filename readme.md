@@ -61,6 +61,23 @@ docker-compose -f docker-compose-AdoptOpenJdk11.yml up
 ```
 Note: Environment variables are passed to docker-compose via docker-compose-env.txt
 
+### Validating Service Info, Health, Liveness and Readiness
+```
+curl -k https://127.0.0.1:8443/actuator/info
+```
+
+```
+curl -k https://127.0.0.1:8443/actuator/health
+```
+
+```
+curl -k https://127.0.0.1:8443/actuator/health/liveness
+```
+
+```
+curl -k https://127.0.0.1:8443/actuator/health/readiness
+```
+
 ### Common issues this demo solves
 
 * service runs as root - opens multiple security halls in docker environment and is prohibited in OpenShift by default
