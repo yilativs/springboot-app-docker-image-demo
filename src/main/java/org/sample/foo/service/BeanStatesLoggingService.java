@@ -16,7 +16,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 /**
- * A service for logging Spring bean states
+ * A service for logging Spring bean states.
+ * Demonstrates graceful shutdown.
  */
 @Service
 public class BeanStatesLoggingService implements BeanNameAware, ApplicationContextAware, InitializingBean, DisposableBean {
