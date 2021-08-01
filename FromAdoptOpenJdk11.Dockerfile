@@ -45,7 +45,6 @@ VOLUME ["/opt/service/logs"]
 #can be used in order to provide certificates (if you have any)
 VOLUME ["/opt/service/ssl"]
 
-
 EXPOSE 8080/tcp
 EXPOSE 8443/tcp
 

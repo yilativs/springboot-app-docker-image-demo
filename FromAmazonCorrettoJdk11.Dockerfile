@@ -15,24 +15,27 @@ RUN keytool  -noprompt -genkeypair -alias service-int -keyalg RSA -keysize 2048 
 RUN keytool  -noprompt -genkeypair -alias service-prod -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/cert.p12 -validity 365 -storepass notAsecret -dname CN="*.platform.prod.intranet"
 
 FROM amazoncorretto:11-alpine-jdk
-#alpine based images should use this ugly command
+
+#install tini to run service not on pid 1
+COPY --from=builder /sbin/tini /sbin/tini
+
+#create user service in order not to run service not as root
+RUN addgroup -S service && adduser -S service -G service -h /opt/service
+
+COPY  --chown=service:service entry-point.sh /opt/service/entry-point.sh
+#chmod can be used in COPY with DOCKER_BUILDKIT=1
+RUN chmod u+x /opt/service/entry-point.sh
+#switch to user 
+USER service:service
+
 WORKDIR /opt/service
-COPY entry-point.sh /opt/service/entry-point.sh
-
-RUN addgroup -S service && \
-adduser -S service -G service -h /opt/service && \
-mkdir -p /opt/service/ssl && \
-chown -R service:service /opt/service \
-&& chmod u+x /opt/service/entry-point.sh
-
 COPY --from=builder /opt/service/dependencies/ ./
 COPY --from=builder /opt/service/snapshot-dependencies/ ./
 COPY --from=builder /opt/service/spring-boot-loader/ ./
 COPY --from=builder /opt/service/application/ ./
-COPY --from=builder /opt/service/ssl/ ./ssl
-COPY --from=builder /sbin/tini /sbin/tini
 
-USER service:service
+RUN mkdir -p /opt/service/ssl
+COPY --from=builder /opt/service/ssl/ ./ssl
 
 #can be used to override image build in configs (e.g. in kubernetes)
 VOLUME ["/opt/service/config"]
