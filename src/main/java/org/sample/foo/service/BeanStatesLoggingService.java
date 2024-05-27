@@ -1,8 +1,5 @@
 package org.sample.foo.service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
@@ -15,8 +12,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+
 /**
- * A service for logging Spring bean states.
+ * A service for logging Spring b
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;ean states.
  * Demonstrates graceful shutdown.
  */
 @Service

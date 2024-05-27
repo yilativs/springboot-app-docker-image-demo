@@ -4,41 +4,43 @@
 
 This project demonstrates following features of a Spring Boot Java application packaged as a docker image:
 
-* Layered jar - allows to minimize docker image size on rebuilds and speed up docker push and pull phases
-* Build properties - allows to use build properties such as pom.xml properties and build timestamp 
-* Multiple profiles to build docker image on top of popular java images - AdoptOpenJdk and Amazoncorretto are supported
-* Readiness at /actuator/health/readiness
-* Liveness at /actuator/health/liveness
+* Layered jar - allows to minimize docker image size on rebuilds and speed up docker push and pull phases.
+* Uses tini alpine image.
+* Exposes build properties such as:
+    * pom.xml properties 
+    * build timestamp
+    * git information 
+    * any custom properties of your choice
+* Multiple profiles to build docker image on top of popular java images such as: 
+    * Eclipse Temurin
+    * Amazoncorretto
+* Exposes liveness probes at /actuator/health/liveness
+* Exposes readiness probes at /actuator/health/readiness
 * SIGTERM handling
 * Graceful shutdown
-* Logging system shutdown - shuts down your log system after all other beans destoyed 
+* Logging system shutdown - shuts down your log system after all other beans are destroyed. 
 * Environment variables are passed via JAVA_OPTS
 * Docker run parameters handling
-* Runs as not a privileged user
+* Runs as non privileged user
 * Self signed SSL certificate generation - often useful for services running behind a reversed proxy.
-* Provides a VOLUME for data
-* Exposes ports 8080 and 8443
+* Provides a VOLUME for data, which can be used to override application.properties
+* Exposes ports: 
+    * 8080 HTTP
+    * 8081 management port
+    * 8443 HTTPS
+    * 5005 JVM debugging
 
 ### Usage
 
 #### Create image with maven:
 ```
-mvn clean install -P build-docker-from-amazoncorretto11
-```
-or
-
-```
-mvn clean install -P build-docker-from-adoptopenjdk11
+mvn clean install
 ```
 
 #### Launch image instance using docker command:
-```
-docker run -it -v "$PWD/data":/opt/service/data -p 8443:8443 -p 8080:8080 -e JAVA_OPTS="-Xms2g -Xmx2g" --rm spring-boot-application-docker-image-demo-amazoncorrettojdk11:latest --spring.profiles.active=local --foo.parameter=some-value
-```
-or
 
 ```
-docker run -it -v "$PWD/data":/opt/service/data -p 8443:8443 -p 8080:8080 -e JAVA_OPTS="-Xms2g -Xmx2g" --rm spring-boot-application-docker-image-demo-adoptopenjdk11:latest --spring.profiles.active=local --foo.parameter=some-value
+docker run -it -v "$PWD/data":/opt/service/data -p 8000:8000 -p 8080:8080 -p 8081:8081 -p 8443:8443 -e JAVA_OPTS="-Xms2g -Xmx2g" --rm springboot-image-demo:latest --spring.profiles.active=local --foo.parameter=some-value
 ```
 
 * JAVA_OPTS environment variable allows to pass jvm parameters to the application 1g is used by default (make sure to set Xms and Xms to same value if you override it)
@@ -50,32 +52,26 @@ docker run -it -v "$PWD/data":/opt/service/data -p 8443:8443 -p 8080:8080 -e JAV
 
 #### Launch image instance using docker-compose command
 
-
 ```
-docker-compose -f docker-compose-AmazonCorretoJdk11.yml up
-```
-or
-
-```
-docker-compose -f docker-compose-AdoptOpenJdk11.yml up
+docker-compose up
 ```
 Note: Environment variables are passed to docker-compose via docker-compose-env.txt
 
 ### Validating Service Info, Health, Liveness and Readiness
 ```
-curl -k https://127.0.0.1:8443/actuator/info
+curl --insecure https://127.0.0.1:8081/actuator/info
 ```
 
 ```
-curl -k https://127.0.0.1:8443/actuator/health
+curl --insecure https://127.0.0.1:8081/actuator/health
 ```
 
 ```
-curl -k https://127.0.0.1:8443/actuator/health/liveness
+curl --insecure https://127.0.0.1:8081/actuator/health/liveness
 ```
 
 ```
-curl -k https://127.0.0.1:8443/actuator/health/readiness
+curl --insecure https://127.0.0.1:8081/actuator/health/readiness
 ```
 
 ### Common issues this demo solves
@@ -89,8 +85,8 @@ curl -k https://127.0.0.1:8443/actuator/health/readiness
 * logging system is stopped before all other services, so logging informations of shutdown process is missing (ie. we can not detect if there are some issues)
 
 ### Reference Documentation
-
-* [Article on layered jar in spring boot ](https://www.baeldung.com/docker-layers-spring-boot)
+* [Spring Layered Images](https://docs.spring.io/spring-boot/docs/3.2.0/reference/html/executable-jar.html)
+* [Article on layered jar in spring boot](https://www.baeldung.com/docker-layers-spring-boot)
 * [Article on signals in docker](https://hynek.me/articles/docker-signals/)
 * [Graceful shutdowns with AWS ECS](https://aws.amazon.com/ru/blogs/containers/graceful-shutdowns-with-ecs/)
 * [A video on Spring Boot dive and layers](https://www.youtube.com/watch?v=WL7U-yGfUXA&t=240sf)

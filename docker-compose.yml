@@ -1,17 +1,19 @@
 # mvn clean install
 # docker-compose up
-# curl --insecure https://localhost:443/actuator/health
+# curl --insecure https://localhost:8081/actuator/health
 
 version: '3'
 
 services:
   springboot-service:
-    image: 'spring-boot-application-docker-image-demo-openjdk11:latest'
+    image: 'springboot-image-demo:latest'
     build:
       context: .
     container_name: springboot-service
     ports:
+     - '8000:8000'
      - '8080:8080'
+     - '8081:8081'
      - '8443:8443'
     env_file:
       - docker-compose-env.txt

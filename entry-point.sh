@@ -14,5 +14,5 @@
 #-XX:+PrintFlagsFinal - always print all flags of the jvm
 
 #printing what will be launched
-echo "exec java ${JAVA_OPTS} org.springframework.boot.loader.JarLauncher $@"
-exec java ${JAVA_OPTS} org.springframework.boot.loader.JarLauncher $@
+echo "exec java ${JAVA_OPTS} org.springframework.boot.loader.launch.Launcher $@"
+exec java ${JAVA_OPTS} org.springframework.boot.loader.launch.JarLauncher $@

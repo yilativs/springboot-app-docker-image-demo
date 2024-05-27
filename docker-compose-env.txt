@@ -1,2 +1,2 @@
-JAVA_OPTS=-Xms1g -Xms1g
+JAVA_OPTS=-Xms1g -Xms1g -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000
 SPRING_PROFILES_ACTIVE=local
