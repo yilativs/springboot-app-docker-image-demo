@@ -25,8 +25,8 @@ RUN /sbin/apk add --no-cache tini
 # -S system user (without login)
 # -D don't create password
 #create user service in order not to run service as root
-RUN addgroup -S service 
-RUN adduser -S service -G service -h /opt/service
+RUN addgroup -S service -g1000
+RUN adduser -S service -G service -u1000 -g1000 -h /opt/service
 
 COPY  --chown=service:service  entry-point.sh /opt/service/entry-point.sh
 #chmod can be used in COPY with DOCKER_BUILDKIT=1

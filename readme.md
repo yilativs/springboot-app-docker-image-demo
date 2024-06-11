@@ -10,10 +10,7 @@ This project demonstrates following features of a Spring Boot Java application p
     * pom.xml properties 
     * build timestamp
     * git information 
-    * any custom properties of your choice
-* Multiple profiles to build docker image on top of popular java images such as: 
-    * Eclipse Temurin
-    * Amazoncorretto
+    * custom properties
 * Exposes liveness probes at /actuator/health/liveness
 * Exposes readiness probes at /actuator/health/readiness
 * SIGTERM handling
@@ -21,7 +18,7 @@ This project demonstrates following features of a Spring Boot Java application p
 * Logging system shutdown - shuts down your log system after all other beans are destroyed. 
 * Environment variables are passed via JAVA_OPTS
 * Docker run parameters handling
-* Runs as non privileged user
+* Runs as non privileged user with custom uid and guid
 * Self signed SSL certificate generation - often useful for services running behind a reversed proxy.
 * Provides a VOLUME for data, which can be used to override application.properties
 * Exposes ports: 
