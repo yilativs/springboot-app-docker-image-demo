@@ -2,10 +2,10 @@
 
 ### Features
 
-This project demonstrates following features of a Spring Boot Java application packaged as a docker image:
+This project demonstrates following features of a Spring Boot Java application packaged with maven as a docker image:
 
-* Layered jar - allows to minimize docker image size on rebuilds and speed up docker push and pull phases.
-* Uses tini alpine image.
+* Layered jar - allows to minimize docker image size on rebuilds and speed up docker push and pull phases
+* Uses tini alpine image
 * Exposes build properties such as:
     * pom.xml properties 
     * build timestamp
@@ -15,24 +15,33 @@ This project demonstrates following features of a Spring Boot Java application p
 * Exposes readiness probes at /actuator/health/readiness
 * SIGTERM handling
 * Graceful shutdown
-* Logging system shutdown - shuts down your log system after all other beans are destroyed. 
+* Logging system shutdown - shuts down your log system after all other beans are destroyed
 * Environment variables are passed via JAVA_OPTS
 * Docker run parameters handling
 * Runs as non privileged user with custom uid and guid
-* Self signed SSL certificate generation - often useful for services running behind a reversed proxy.
+* Self signed SSL certificate generation - often useful for services running behind a reversed proxy
 * Provides a VOLUME for data, which can be used to override application.properties
 * Exposes ports: 
     * 8080 HTTP
     * 8081 management port
     * 8443 HTTPS
     * 5005 JVM debugging
+ * Docker tag support for:
+    * Build id
+    * Git commit id 
+    * pom.version
 
 ### Usage
 
 #### Create image with maven:
 ```
-mvn clean install
+mvn clean install 
 ```
+or if you want to specify build.id from your build pipeline:
+```
+mvn clean install "-Dbuild.id=2"
+```
+
 
 #### Launch image instance using docker command:
 

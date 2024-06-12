@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<docker-maven-plugin.version>0.44.0</docker-maven-plugin.version>
+		<build.id>1</build.id>
 	</properties>
 
 	<dependencies>
@@ -49,6 +50,18 @@
 			<plugin>
 				<groupId>io.github.git-commit-id</groupId>
 				<artifactId>git-commit-id-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>get-the-git-infos</id>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+						<phase>validate</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -80,6 +93,8 @@
 								<tags>
 									<tag>${project.version}</tag>
 									<tag>latest</tag>
+									<tag>${project.version}-${git.commit.id}</tag>
+									<tag>${project.version}-${git.commit.id}-${build.id}</tag>
 								</tags>
 								<contextDir>${project.basedir}</contextDir>
 								<dockerFile>Dockerfile</dockerFile>
