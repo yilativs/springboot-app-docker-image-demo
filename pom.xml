@@ -91,10 +91,10 @@
 							<name>${project.artifactId}</name>
 							<build>
 								<tags>
-									<tag>${project.version}</tag>
 									<tag>latest</tag>
+									<tag>${project.version}</tag>
 									<tag>${project.version}-${git.commit.id}</tag>
-									<tag>${project.version}-${git.commit.id}-${build.id}</tag>
+									<tag>${project.version}-${build.id}</tag>
 								</tags>
 								<contextDir>${project.basedir}</contextDir>
 								<dockerFile>Dockerfile</dockerFile>

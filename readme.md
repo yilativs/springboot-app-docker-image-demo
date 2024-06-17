@@ -20,7 +20,11 @@ This project demonstrates following features of a Spring Boot Java application p
 * Docker run parameters handling
 * Runs as non privileged user with custom uid and guid
 * Self signed SSL certificate generation - often useful for services running behind a reversed proxy
-* Provides a VOLUME for data, which can be used to override application.properties
+* Provides a VOLUMES for data: 
+    * for overriding application.properties
+    * for temporary files (never modify your root file system)
+    * for ssl certificates if you need to rotate them without re-building image
+    * for logs in case you have a good reason to store logs on disk
 * Exposes ports: 
     * 8080 HTTP
     * 8081 management port
@@ -82,13 +86,11 @@ curl --insecure https://127.0.0.1:8081/actuator/health/readiness
 
 ### Common issues this demo solves
 
-* service runs as root - opens multiple security halls in docker environment and is prohibited in OpenShift by default
-* layered jars are not used (IMPACT - large images)
-* layered jars are used but not properly handled during docker build (IMPACT - created docker layers can not be reused)
-* graceful shutdown is not enabled in spring and because of it a system can stop in the middle of response leading to errors on the client side
+* Service runs as root, causes multiple security issues in docker environment and is prohibited in OpenShift by default
+* Layered jars are not reused used. Causes each docker build to take around 500Mb while it can take less than 1kb.
+* Graceful shutdown is not enabled in spring and because of it a system can stop in the middle of response leading to errors on the client side, as well as issues with termination of scheduled job. Logging system may fail to send last log messages to log system.
 * system does not handle SIGTERM from container environment and hence graceful shutdown is not working even if it is enabled
 * tini is not used and as a result a docker container can fail top stop properly leading to resource exhaustion problems 
-* logging system is stopped before all other services, so logging informations of shutdown process is missing (ie. we can not detect if there are some issues)
 
 ### Reference Documentation
 * [Spring Layered Images](https://docs.spring.io/spring-boot/docs/3.2.0/reference/html/executable-jar.html)

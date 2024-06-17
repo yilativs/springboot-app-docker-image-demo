@@ -43,6 +43,9 @@ COPY --from=builder /opt/service/service/application/ ./
 RUN mkdir -p /opt/service/ssl
 COPY --from=builder /opt/service/ssl/ ./ssl
 
+#can be used for temporary files (e.g. tomcat uses it) 
+VOLUME ["/tmp"]
+
 #can be used to override image application.propertries file
 VOLUME ["/opt/service/config"]
 
