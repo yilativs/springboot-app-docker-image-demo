@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-alpine as builder
+FROM eclipse-temurin:21-jre-alpine as builder
 
 WORKDIR /opt/service
 
@@ -14,7 +14,7 @@ RUN keytool  -noprompt -genkeypair -alias service-dev -keyalg RSA -keysize 2048 
 RUN keytool  -noprompt -genkeypair -alias service-int -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/cert.p12 -validity 365 -storepass notAsecret -dname CN="*.platform.int.intranet"
 RUN keytool  -noprompt -genkeypair -alias service-prod -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore /opt/service/ssl/cert.p12 -validity 365 -storepass notAsecret -dname CN="*.platform.prod.intranet"
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 #install tini to run service not on pid 1
 RUN /sbin/apk add --no-cache tini
