@@ -13,18 +13,16 @@ This project demonstrates following features of a Spring Boot Java application p
     * custom properties
 * Exposes liveness probes at /actuator/health/liveness
 * Exposes readiness probes at /actuator/health/readiness
-* SIGTERM handling
-* Graceful shutdown
-* Logging system shutdown - shuts down your log system after all other beans are destroyed
-* Environment variables are passed via JAVA_OPTS
+* Handles SIGTERM for graceful shutdown
+* Passes ENV variables and command line parameters to the application
 * Docker run parameters handling
 * Runs as non privileged user with custom uid and guid
-* Self signed SSL certificate generation - often useful for services running behind a reversed proxy
-* Provides a VOLUMES for data: 
-    * for overriding application.properties
-    * for temporary files (never modify your root file system)
-    * for ssl certificates if you need to rotate them without re-building image
-    * for logs in case you have a good reason to store logs on disk
+* Creates self signed SSL certificates  (can be useful for services running behind a reversed proxy)
+* Provides VOLUMES for: 
+    * overriding application.properties - for cases when you want to change configuration without re-building an image
+    * temporary files - for cases when you want to attach fast storage for temp files
+    * ssl certificates - for cases when you need to rotate them without re-building image
+    * logs - for case when you run service with log collection enabled and what logs kee logs between restarts
 * Exposes ports: 
     * 8080 HTTP
     * 8081 management port
@@ -93,10 +91,10 @@ curl --insecure https://127.0.0.1:8081/actuator/health/readiness
 * tini is not used and as a result a docker container can fail top stop properly leading to resource exhaustion problems 
 
 ### Reference Documentation
-* [Spring Layered Images](https://docs.spring.io/spring-boot/docs/3.2.0/reference/html/executable-jar.html)
-* [Article on layered jar in spring boot](https://www.baeldung.com/docker-layers-spring-boot)
+* [Spring Layered Images](https://docs.spring.io/spring-boot/reference/packaging/container-images/efficient-images.html)
+* [Article on layered jar with spring boot](https://www.baeldung.com/docker-layers-spring-boot)
 * [Article on signals in docker](https://hynek.me/articles/docker-signals/)
-* [Graceful shutdowns with AWS ECS](https://aws.amazon.com/ru/blogs/containers/graceful-shutdowns-with-ecs/)
-* [A video on Spring Boot dive and layers](https://www.youtube.com/watch?v=WL7U-yGfUXA&t=240sf)
+* [Graceful shutdowns with AWS ECS](https://aws.amazon.com/ru/blogs/containers/graceful-shutdowns-with-ecs)
+* [A video on Spring Boot dive and layers](https://www.youtube.com/watch?v=WL7U-yGfUXA&t=240)
 * [dive - a tool to inspert docker imager layers ](https://github.com/wagoodman/dive)
-* [Actuator docs](https://docs.spring.io/spring-boot/docs/2.5.x/reference/html/actuator.html#actuator)
+* [Actuator health endpoints](https://docs.spring.io/spring-boot/reference/actuator/endpoints.html#actuator.endpoints.health)
